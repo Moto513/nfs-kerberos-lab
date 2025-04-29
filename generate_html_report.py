@@ -21,8 +21,8 @@ html_header = """
     code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
     pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
   </style>
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
     mermaid.initialize({ startOnLoad: true });
   </script>
 </head>
