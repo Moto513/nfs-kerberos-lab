@@ -29,61 +29,31 @@
 <li>Mount Point: <code>/mnt/exports</code></li>
 <li>Authentication: Kerberos (<code>sec=krb5</code>)</li>
 </ul>
-<h2>Important Files</h2>
-<p>| File | Description |
-|------|-------------|
-| krb5.conf | Kerberos configuration |
-| kadm5.acl | Admin privileges for Kerberos |
-| idmapd.conf | NFSv4 domain configuration |
-| exports | NFSv4 export settings |</p>
-<h2>Mount (Client Side)</h2>
-<p>```bash
-kinit motokazu
-sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
-<h2>Architecture (Mermaid Diagram)</h2>
-<p>```mermaid
-graph TD
-  Client[Linux Client (motokazu)]
-  Server[NFS Server + Kerberos (samba.lab)]</p>
-<p>Client -- kinit motokazu --&gt; Server
-  Client -- mount sec=krb5 --&gt; Server
-  Server --&gt;|Exports /exports| Client
-```</p>
-<h2>Architecture Diagram (Mermaid)</h2>
-<p>```mermaid
-graph TD
-  Client[Linux Client (motokazu)]
-  Server[NFS Server + Kerberos (samba.lab)]
-  Keytab[/etc/krb5.keytab]
-  Exports[/exports]
-  KDC[Kerberos KDC (LAB.LOCAL)]</p>
-<p>Client -- kinit motokazu --&gt; KDC
-  Client -- mount -t nfs4 -o sec=krb5 --&gt; Server
-  Server --&gt; Exports
-  Server --&gt; Keytab
-```</p><hr>
+<h2>Files</h2>
+<p>| File         | Description                    |
+|--------------|--------------------------------|
+| krb5.conf    | Kerberos configuration         |
+| kadm5.acl    | Kerberos ACL for kadmin        |
+| idmapd.conf  | NFSv4 domain name configuration|
+| exports      | NFSv4 export configuration     |</p><hr>
 <h2>commands.log</h2>
-<h1>Kerberos プリンシパル作成とキータブ登録</h1>
+<h1>Kerberos principal creation</h1>
 <p>sudo kadmin.local
 addprinc -randkey nfs/samba.lab@LAB.LOCAL
 ktadd nfs/samba.lab@LAB.LOCAL</p>
-<h1>/etc/krb5.keytab 確認</h1>
+<h1>Keytab check</h1>
 <p>sudo klist -k</p>
-<h1>idmapd.conf 編集（NFSドメイン設定）</h1>
-<p>sudo nano /etc/idmapd.conf
-→ Domain = lab.local に設定</p>
-<h1>/etc/exports 編集（NFSエクスポート）</h1>
-<p>sudo nano /etc/exports
-→ /exports *(rw,sec=krb5,fsid=0,no_root_squash,no_subtree_check)</p>
-<h1>サービス再起動</h1>
+<h1>idmapd.conf edit</h1>
+<p>sudo nano /etc/idmapd.conf  # set Domain = lab.local</p>
+<h1>exports edit</h1>
+<p>sudo nano /etc/exports  # set: /exports *(rw,sec=krb5,fsid=0,no_root_squash,no_subtree_check)</p>
+<h1>Restart services</h1>
 <p>sudo systemctl restart nfs-kernel-server
 sudo systemctl restart nfs-idmapd.service</p>
-<h1>Kerberos チケット取得（クライアント側）</h1>
-<p>kinit motokazu</p>
-<h1>NFS マウント</h1>
-<p>sudo mkdir -p /mnt/exports
+<h1>kinit and mount</h1>
+<p>kinit motokazu
 sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
-<h1>マウント確認</h1>
+<h1>Confirm mount</h1>
 <p>df -h | grep /mnt/exports</p><hr>
 <h2>Architecture Diagram</h2>
 <pre class="mermaid">

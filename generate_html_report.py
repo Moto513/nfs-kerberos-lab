@@ -1,9 +1,11 @@
 import markdown
 from pathlib import Path
 
+# ファイル一覧
 files = ["README.md", "commands.log"]
 output = Path("index.html")
 
+# HTMLヘッダー＋スタイル＋Mermaid読み込み（v9.4.0）
 html_header = """
 <!DOCTYPE html>
 <html>
@@ -30,13 +32,13 @@ html_footer = "</body></html>"
 
 full_html = html_header
 
-# 通常MarkdownファイルをHTML化
+# Markdownファイルの変換
 for f in files:
     text = Path(f).read_text()
     html = markdown.markdown(text)
-    full_html += f"<h2>{f}</h2>\n" + html + "<hr>\n"
+    full_html += f"<h2>{f}</h2>\n{html}<hr>\n"
 
-# Mermaid構成図を追加
+# Mermaid構成図の追加
 mermaid_code = Path("diagram.mmd").read_text()
 full_html += "<h2>Architecture Diagram</h2>\n"
 full_html += f"<pre class=\"mermaid\">\n{mermaid_code}\n</pre>\n"
@@ -44,4 +46,4 @@ full_html += f"<pre class=\"mermaid\">\n{mermaid_code}\n</pre>\n"
 full_html += html_footer
 
 output.write_text(full_html)
-print(f"✅ HTML report written to {output}")
+print("✅ HTML report written to index.html")
