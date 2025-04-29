@@ -63,7 +63,6 @@ graph TD
   Server[NFS Server + Kerberos (samba.lab)]
   Keytab[/etc/krb5.keytab]
   Exports[/exports]
-
   Client -->|kinit| KDC
   Client -->|mount -o sec=krb5| Server
   Server --> Keytab
