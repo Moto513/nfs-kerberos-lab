@@ -11,6 +11,10 @@
     code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
     pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
   </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </head>
 <body>
 <h1>NFS + Kerberos Lab Report</h1>
@@ -81,4 +85,19 @@ sudo systemctl restart nfs-idmapd.service</p>
 sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
 <h1>マウント確認</h1>
 <p>df -h | grep /mnt/exports</p><hr>
+<h2>Architecture Diagram</h2>
+<pre class="mermaid">
+graph TD
+  Client[Linux Client (motokazu)]
+  Server[NFS Server + Kerberos (samba.lab)]
+  Keytab[/etc/krb5.keytab]
+  Exports[/exports]
+  KDC[Kerberos KDC (LAB.LOCAL)]
+
+  Client -- kinit motokazu --> KDC
+  Client -- mount -t nfs4 -o sec=krb5 --> Server
+  Server --> Exports
+  Server --> Keytab
+
+</pre>
 </body></html>
