@@ -13,7 +13,9 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.0/dist/mermaid.min.js"></script>
   <script>
-    mermaid.initialize({ startOnLoad: true });
+    window.addEventListener("DOMContentLoaded", function () {
+      mermaid.initialize({ startOnLoad: true });
+    });
   </script>
 </head>
 <body>
@@ -55,6 +57,7 @@ sudo systemctl restart nfs-idmapd.service</p>
 sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
 <h1>Confirm mount</h1>
 <p>df -h | grep /mnt/exports</p><hr>
+
 <h2>Architecture Diagram</h2>
 <pre class="mermaid">
 graph TD

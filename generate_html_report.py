@@ -1,9 +1,11 @@
 import markdown
 from pathlib import Path
 
+# ファイル設定
 files = ["README.md", "commands.log"]
 output = Path("index.html")
 
+# HTML ヘッダー
 html_header = """
 <!DOCTYPE html>
 <html>
@@ -19,26 +21,29 @@ html_header = """
   </style>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@9.4.0/dist/mermaid.min.js"></script>
   <script>
-    mermaid.initialize({ startOnLoad: true });
+    window.addEventListener("DOMContentLoaded", function () {
+      mermaid.initialize({ startOnLoad: true });
+    });
   </script>
 </head>
 <body>
 <h1>NFS + Kerberos Lab Report</h1>
 """
 
+# HTML フッター
 html_footer = "</body></html>"
 
+# Markdown → HTML 変換＋結合
 full_html = html_header
-
-# Markdownファイルの変換
 for f in files:
     text = Path(f).read_text()
     html = markdown.markdown(text)
     full_html += f"<h2>{f}</h2>\n{html}<hr>\n"
 
-# Mermaid構成図（直接埋め込み）
-full_html += "<h2>Architecture Diagram</h2>\n"
-full_html += """<pre class="mermaid">
+# Mermaid構成図（HTMLに直接埋め込み）
+full_html += """
+<h2>Architecture Diagram</h2>
+<pre class="mermaid">
 graph TD
   Client[Linux Client (motokazu)]
   KDC[Kerberos KDC (LAB.LOCAL)]
@@ -52,6 +57,7 @@ graph TD
 </pre>
 """
 
+# ファイル出力
 full_html += html_footer
 output.write_text(full_html)
 print("✅ HTML report written to index.html")
