@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>NFS + Kerberos Lab Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; line-height: 1.6; }
+    h1 { color: #2c3e50; }
+    h2 { color: #34495e; border-bottom: 1px solid #ccc; }
+    code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; }
+    pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+<h1>NFS + Kerberos Lab Report</h1>
+<h2>README.md</h2>
+<h1>NFS with Kerberos Authentication Lab</h1>
+<p>This repository documents a complete setup for enabling Kerberos-authenticated NFSv4 file sharing using Ubuntu.</p>
+<h2>Overview</h2>
+<ul>
+<li>Hostname: <code>samba.lab</code></li>
+<li>Realm: <code>LAB.LOCAL</code></li>
+<li>Shared Directory: <code>/exports</code></li>
+<li>Mount Point: <code>/mnt/exports</code></li>
+<li>Authentication: Kerberos (<code>sec=krb5</code>)</li>
+</ul>
+<h2>Important Files</h2>
+<p>| File | Description |
+|------|-------------|
+| krb5.conf | Kerberos configuration |
+| kadm5.acl | Admin privileges for Kerberos |
+| idmapd.conf | NFSv4 domain configuration |
+| exports | NFSv4 export settings |</p>
+<h2>Mount (Client Side)</h2>
+<p>```bash
+kinit motokazu
+sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
+<h2>Architecture (Mermaid Diagram)</h2>
+<p>```mermaid
+graph TD
+  Client[Linux Client (motokazu)]
+  Server[NFS Server + Kerberos (samba.lab)]</p>
+<p>Client -- kinit motokazu --&gt; Server
+  Client -- mount sec=krb5 --&gt; Server
+  Server --&gt;|Exports /exports| Client
+```</p>
+<h2>Architecture Diagram (Mermaid)</h2>
+<p>```mermaid
+graph TD
+  Client[Linux Client (motokazu)]
+  Server[NFS Server + Kerberos (samba.lab)]
+  Keytab[/etc/krb5.keytab]
+  Exports[/exports]
+  KDC[Kerberos KDC (LAB.LOCAL)]</p>
+<p>Client -- kinit motokazu --&gt; KDC
+  Client -- mount -t nfs4 -o sec=krb5 --&gt; Server
+  Server --&gt; Exports
+  Server --&gt; Keytab
+```</p><hr>
+<h2>commands.log</h2>
+<h1>Kerberos プリンシパル作成とキータブ登録</h1>
+<p>sudo kadmin.local
+addprinc -randkey nfs/samba.lab@LAB.LOCAL
+ktadd nfs/samba.lab@LAB.LOCAL</p>
+<h1>/etc/krb5.keytab 確認</h1>
+<p>sudo klist -k</p>
+<h1>idmapd.conf 編集（NFSドメイン設定）</h1>
+<p>sudo nano /etc/idmapd.conf
+→ Domain = lab.local に設定</p>
+<h1>/etc/exports 編集（NFSエクスポート）</h1>
+<p>sudo nano /etc/exports
+→ /exports *(rw,sec=krb5,fsid=0,no_root_squash,no_subtree_check)</p>
+<h1>サービス再起動</h1>
+<p>sudo systemctl restart nfs-kernel-server
+sudo systemctl restart nfs-idmapd.service</p>
+<h1>Kerberos チケット取得（クライアント側）</h1>
+<p>kinit motokazu</p>
+<h1>NFS マウント</h1>
+<p>sudo mkdir -p /mnt/exports
+sudo mount -t nfs4 -o sec=krb5 samba.lab:/ /mnt/exports</p>
+<h1>マウント確認</h1>
+<p>df -h | grep /mnt/exports</p><hr>
+</body></html>
