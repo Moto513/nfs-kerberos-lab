@@ -1,11 +1,11 @@
 graph TD
   Client[Linux Client (motokazu)]
   Server[NFS Server + Kerberos (samba.lab)]
+  KDC[Kerberos KDC (LAB.LOCAL)]
   Keytab[/etc/krb5.keytab]
   Exports[/exports]
-  KDC[Kerberos KDC (LAB.LOCAL)]
 
-  Client -- kinit motokazu --> KDC
-  Client -- mount -t nfs4 -o sec=krb5 --> Server
-  Server --> Exports
+  Client -->|kinit motokazu| KDC
+  Client -->|mount sec=krb5| Server
   Server --> Keytab
+  Server --> Exports
